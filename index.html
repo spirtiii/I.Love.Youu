@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ты меня любишь?</title>
+    <style>
+        body {
+            background-color: red;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0s ease;
+            height: 100vh;
+        }
+        h1 {
+            color: white;
+            font-size: 30px;
+            margin-top: 20vh;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+        .hidden {
+            display: none;
+        }
+        .button-container {
+            position: absolute;
+            width: 100%;
+            top: 60%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            z-index: 10;
+        }
+        .btn {
+            font-size: 24px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid;
+            transition: 0.3s;
+            z-index: 10;
+        }
+        .btn-yes {
+            background-color: red;
+            border-color: gray;
+            color: white;
+        }
+        .btn-no {
+            background-color: gray;
+            border-color: darkgray;
+            color: white;
+        }
+        .btn-kiss {
+            background-color: red;
+            color: white;
+            border: 3px solid white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 30px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-kiss:hover {
+            background-color: darkred;
+            transform: scale(1.1);
+        }
+        .hearts {
+            position: absolute;
+            font-size: 30px;
+            animation: fallAndSpin linear infinite;
+            pointer-events: none;
+        }
+        .sad-hearts {
+            position: absolute;
+            font-size: 30px;
+            animation: sadFall linear infinite;
+            pointer-events: none;
+        }
+        @keyframes fallAndSpin {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        @keyframes sadFall {
+            0% {
+                transform: translateY(-10vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        .love-message {
+            font-size: 40px;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="question">Ты меня любишь?</h1>
+    <div class="button-container">
+        <button class="btn btn-yes" onclick="loveYes()" id="yesBtn">Да</button>
+        <button class="btn btn-no" onclick="loveNo()" id="noBtn">Нет</button>
+    </div>
+    <div id="loveMessage" class="hidden love-message">Я тоже тебя очень очень сильно люблю 💋💋💋</div>
+
+    <audio id="loveSound" src="your_sound_file.mp3" preload="auto"></audio>
+
+    <script>
+        const emojis = ["😍", "💕", "💞", "🌹", "🥰", "💘", "❤️‍🔥", "💗", "💓"];
+        const sadEmojis = ["😭", "🤍", "🩶", "🥺"];
+
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.innerHTML = "❤️❤️‍🔥";
+            heart.classList.add("hearts");
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+
+        setInterval(() => {
+            if (document.body.style.backgroundColor !== "gray") {
+                createHeart();
+            }
+        }, 100);
+
+        function loveYes() {
+            // Резкое изменение фона на красный
+            document.body.style.backgroundColor = "red";
+            document.getElementById("question").classList.add("hidden"); 
+            document.getElementById("noBtn").classList.add("hidden"); // Скрываем кнопку "Нет"
+
+            // Создаем кнопку 💋 с красным фоном
+            const kissButton = document.createElement("button");
+            kissButton.classList.add("btn-kiss");
+            kissButton.innerHTML = "💋";
+            kissButton.onclick = () => createEmoji();
+            document.querySelector(".button-container").appendChild(kissButton);
+
+            // Скрываем старую кнопку "Да"
+            document.getElementById("yesBtn").classList.add("hidden");
+
+            document.getElementById("loveMessage").classList.remove("hidden");
+
+            let kisses = setInterval(() => {
+                const kiss = document.createElement("div");
+                kiss.innerHTML = "💋❤️";
+                kiss.classList.add("hearts");
+                kiss.style.left = Math.random() * 100 + "vw";
+                kiss.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                kiss.style.fontSize = (Math.random() * 20 + 20) + "px";
+                document.body.appendChild(kiss);
+                setTimeout(() => { kiss.remove(); }, 5000);
+            }, 100);
+
+            document.body.setAttribute("data-kisses", kisses);
+
+            // Убираем грустные смайлики
+            document.querySelectorAll(".sad-hearts").forEach(e => e.remove());
+
+            // Убираем любовные смайлики
+            document.querySelectorAll(".hearts").forEach(e => {
+                e.style.animation = 'none';
+                e.style.opacity = 0;
+            });
+        }
+
+        function createSadEmoji() {
+            const emoji = document.createElement("div");
+            emoji.innerHTML = sadEmojis[Math.floor(Math.random() * sadEmojis.length)];
+            emoji.classList.add("hearts", "sad-hearts");
+            emoji.style.left = Math.random() * 100 + "vw";
+            emoji.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            emoji.style.fontSize = (Math.random() * 20 + 20) + "px";
+            document.body.appendChild(emoji);
+            setTimeout(() => { emoji.remove(); }, 5000);
+        }
+
+        function loveNo() {
+            document.body.style.transition = "none"; // Убираем плавность
+            document.body.style.backgroundColor = "gray";
+
+            let sadEmojisInterval = setInterval(() => {
+                createSadEmoji();
+            }, 100);
+
+            document.body.setAttribute("data-sadEmojis", sadEmojisInterval);
+
+            // Скрываем кнопку "Да" при нажатии на "Нет"
+            document.getElementById("yesBtn").classList.add("hidden");
+
+            // Включаем плавный переход после 1 секунды
+            setTimeout(() => {
+                document.body.style.transition = "background-color 4s ease-in-out";
+            }, 1000);
+
+            // Убираем любовные смайлики
+            document.querySelectorAll(".hearts").forEach(e => {
+                e.style.animation = 'none';
+                e.style.opacity = 0;
+            });
+        }
+
+        function createEmoji() {
+            const emoji = document.createElement("div");
+            emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.classList.add("hearts");
+            emoji.style.left = Math.random() * 100 + "vw";
+            emoji.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            emoji.style.fontSize = (Math.random() * 20 + 20) + "px";
+            document.body.appendChild(emoji);
+            setTimeout(() => { emoji.remove(); }, 5000);
+        }
+    </script>
+</body>
+</html>
